@@ -49,21 +49,26 @@ app.get("/",function(req,res){
 
 //Login functionality
 app.post('/login', function (req, res) {
-  //console.log('inside login', req.body);
+  console.log('inside login', req.body);
   var creds = req.body;
+  console.log("creds" , creds);
   var ret = {};
   UsersList.find(function (err, doc) {
-    //console.log("doc", typeof doc)
+    console.log("doc", typeof doc)
     for (let i = 0; i < doc.length; i++) {
-      //console.log('inside for', doc[i])
-      if (doc[i].username == creds.userName && doc[i].password == creds.password) {
-        //console.log('creds mathced');
+      console.log('inside for', doc[i])
+      if (doc[i].username == creds.username && doc[i].password == creds.password) {
+        console.log('creds mathced');
         ret = {
-          message: "Login successful", status: 200
+          message: "valid",
         }
         res.send(ret);
       }
     }
+    res.send({
+      message: "invalid",
+    })
+    
   });
 });
 

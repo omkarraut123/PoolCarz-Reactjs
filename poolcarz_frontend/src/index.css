@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.loginStyle {
+  background-color: antiquewhite;
+  background-image: url('./carpooling.jpg');
+  height: 37rem;
+  background-position-y: bottom;
+  position: static;
+  
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.LoginPage {
+  background: white;
+    position: relative;
+    width: 500px;
+    left: 0 auto;
+    left: 495px;
+    top: 30px;
+    height: 400px;
+}
