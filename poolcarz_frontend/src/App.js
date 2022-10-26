@@ -3,14 +3,18 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import Login from './components/Login';
 import { Routes,Route } from 'react-router-dom';
+import ShowRide from './components/ShowRide';
+import ShowallRides from './components/ShowallRides';
 function App() {
   return (
     <div >      
         {/* <img src={logo} className="App-logo" alt="logo" />         */}
-        <NavBar />
-      <Routes>
-        <Route path='/' element={<Login />}/>
-      </Routes>
+    <NavBar />
+        <Routes>
+          <Route path='/' element={<Login />}/>
+          <Route path='/show_rides' element={<ShowRide />} />
+          <Route path='/show_rides/all' element={<ShowallRides />} />
+        </Routes>
     <Footer />
     </div>
   );
