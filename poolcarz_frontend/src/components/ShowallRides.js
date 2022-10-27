@@ -1,30 +1,59 @@
-import axios from 'axios'
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Modal, Button } from "react-bootstrap";
+import axios from 'axios';
+const ShowallRides = () => {
+    const [allRides,setAllrides] = useState([]);
+    const [rideDetail,setRideDetails] = useState([]);
+    const [rowstyle,setStyle] = useState(false);  
+    const [id,setId] = useState('');
+    const [book,showBook] = useState(false);
+    const [cancel,showCancel] = useState(false);
+    let [hoveStyle,setHoverStyle] = useState({
+        background: ''
+    })
 
-export class ShowallRides extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-             allRides: [],
-             isShow: false,
-        }
-    }
-    componentDidMount(){
+ const [show, setShow] = useState(false);
+ const handleShow = (rideDetail) => {
+    //console.log(rideDetail)
+    setRideDetails([rideDetail]);
+    showBook(true);
+    setAllrides([]);
+    //setShow(true);
+}
+ const handleClose = () => setShow(false);
+
+    useEffect(()=>{
         axios.get('http://localhost:5000/show_rides').then((res) => {
             console.log(res.data)
-            this.setState({
-                allRides: res.data,
-                isShow: true,
-            })
+          
+            setAllrides(res.data);            
         }).catch((err) => {
             console.log(err)
         })
+    },[])
+
+
+    const bookRide = () => {
+        
+       const data = { 'rider': rideDetail,
+        'ridee':'admin'}
+        console.log(data);
+            axios.post('http://localhost:5000/book_ride',data)
+            .then((res) => {
+                console.log(res);
+                setId(res.data.id)
+                showBook(false);
+                showCancel(true);
+                //handleClose();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
-    render() {
-        return (
-            <>
+    return (
+        <>
             <div className='loginStyle'>
                    <div className='container' style={{                
                     height: '519px',
@@ -46,27 +75,78 @@ export class ShowallRides extends Component {
                       }} >Show All Rides</button>
 
                     <table style={{width:'100%',marginTop:'12px'}} className='table'>
-                         <thead className="thead-light">
+                         {allRides.length != 0 && <thead className="thead-light">
                              <tr>
                                   <th>Start Point</th>
                                   <th>End Point</th>
                                   <th>Seats Available</th>
                              </tr>
                          </thead>
+                         }
+                         {
+                          rideDetail != 0 && <thead className="thead-light">
+                           <tr>
+                                <th>name</th>
+                                <th>pickUp</th>
+                                <th>destination</th>
+                                <th>car</th>
+                                <th>seatsLeft</th>
+                           </tr>
+                       </thead> 
+                         }
                          <tbody>
-                              {this.state.allRides ?
-                              this.state.allRides.map(ride => {
-                                     return (<tr key={ride.id}>
+                            
+                              {
+                              allRides.length != 0 &&
+                                allRides.map(ride => {
+                                return (<tr key={ride.id}  onClick={ () => handleShow({_id:ride.id,id:ride.id,name:ride.name,pickUp: ride.pickUp,
+                                   destination: ride.destination,car: ride.car,seatsLeft: ride.seatsLeft,__v: ride.__v
+                                }) } >
+                                        <td>{ride.pickUp}</td>
+                                        <td>{ride.destination}</td>
+                                        <td>{ride.seatsLeft}</td>
+                                </tr>)
+                        }) 
+                             }
+                             
+                            {
+                                rideDetail &&
+                          
+                                    rideDetail.map(ride => {
+                                           return (<tr key={ride.id} >
+                                             <td>{ride.name}</td>
                                              <td>{ride.pickUp}</td>
                                              <td>{ride.destination}</td>
+                                             <td>{ride.car}</td>
                                              <td>{ride.seatsLeft}</td>
-                                     </tr>)
-                             }):<tr><td>No Data found</td></tr>
-                             }
+                                                  
+                                           </tr>)
+                                   })
+                                   
+                                 
+                            }
+                            
                          </tbody>
                     </table>
-
-
+                            {
+                                book && <button type="button" className='btn btn-primary' onClick={bookRide}>Book a Ride</button>
+                            }
+                {
+                    cancel != 0 && <div>
+                        <p style={{
+                            marginTop: '43px',
+                            textAlign: 'center',
+                        }}>Ride booked. Id is {id}</p>
+                    <button type="button" className='btn btn-danger' style={{
+                        paddingLeft: '0px',
+                        paddingRight: '0px',
+                        width: '15%',
+                        position: 'absolute',
+                        bottom: '106px',
+                        left: '352px'
+                  }}>Cancel Ride</button>
+                  </div>
+                 }   
 
 
                       <button type="button" className='btn btn-primary' style={{
@@ -75,15 +155,48 @@ export class ShowallRides extends Component {
                             width: '15%',
                             position: 'absolute',
                             bottom: '17px',
-                            left: '352px'
+                            left: '352px',                            
                       }}>Offer a Rides!</button>
                     </div>
                 
                 </div>
+        <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton style={{background: 'cornflowerblue'}}>
+          <Modal.Title>Ride details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <table style={{width:'100%',marginTop:'12px'}} className='table'>
+                         <thead className="thead-light">
+                             <tr>
+                                 <th>Name</th>                             
+                                  <th>Start Point</th>
+                                  <th>End Point</th>
+                                  <th>Car</th>
+                                  <th>Seats Available</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                              {rideDetail ?
+                              rideDetail.map(ride => {
+                                     return (<tr key={ride.id} >
+                                             <td>{ride.name}</td>
+                                             <td>{ride.pickUp}</td>
+                                             <td>{ride.destination}</td>
+                                             <td>{ride.car}</td>
+                                             <td>{ride.seatsLeft}</td>
+                                     </tr>)
+                             }):<tr><td>No Data found</td></tr>
+                             }
+                         </tbody>
+                    </table>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={bookRide}>Book a Ride</Button>
+        </Modal.Footer>
+      </Modal>
             </div>
         </>
-            )  
-    }
-}
+    );
+};
 
-export default ShowallRides
+export default ShowallRides;
