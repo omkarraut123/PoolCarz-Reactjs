@@ -31,7 +31,7 @@ const ShowRide = () => {
                         width: '15%',
                         marginTop: '36px',
                         marginLeft: '21rem'
-                  }}>Offer a Rides!</button>
+                  }} onClick={() => navigate('/offer_ride')}>Offer a Rides!</button>
                 </div>
             
             </div>
