@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button } from "react-bootstrap";
+import { Navigate, useNavigate } from 'react-router-dom';
+//import { Modal, Button } from "react-bootstrap";
 import axios from 'axios';
 const ShowallRides = () => {
     const [allRides,setAllrides] = useState([]);
@@ -11,7 +12,8 @@ const ShowallRides = () => {
     let [hoveStyle,setHoverStyle] = useState({
         background: ''
     })
-
+    
+    const navigate = useNavigate();
 
  const [show, setShow] = useState(false);
  const handleShow = (rideDetail) => {
@@ -33,6 +35,23 @@ const ShowallRides = () => {
         })
     },[])
 
+    const showAllRides = () => {
+        if(cancel == true){
+            alert("Your previous ride is in progress..!")
+        }else{        
+        axios.get('http://localhost:5000/show_rides').then((res) => {
+            console.log(res.data)          
+            setAllrides(res.data); 
+            setRideDetails([])
+            showCancel(false);
+            showBook(false);
+
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+    }
+
 
     const bookRide = () => {
         
@@ -43,6 +62,7 @@ const ShowallRides = () => {
             .then((res) => {
                 console.log(res);
                 setId(res.data.id)
+               // setRideDetails([])
                 showBook(false);
                 showCancel(true);
                 //handleClose();
@@ -50,6 +70,16 @@ const ShowallRides = () => {
             .catch((err) => {
                 console.log(err);
             })
+    }
+
+ const cancelRide = () => {
+        axios.post('http://localhost:5000/cancel_ride',{rideId: id})
+        .then((res) => {
+            console.log(res);
+            alert(res.data.message);
+            showCancel(false);
+            showBook(true);   
+        })
     }
 
     return (
@@ -72,7 +102,7 @@ const ShowallRides = () => {
                             paddingRight: '0px',
                             width: '15%',
                             margin: '0 auto',
-                      }} >Show All Rides</button>
+                      }} onClick={showAllRides}>Show All Rides</button>
 
                     <table style={{width:'100%',marginTop:'12px'}} className='table'>
                          {allRides.length != 0 && <thead className="thead-light">
@@ -110,7 +140,7 @@ const ShowallRides = () => {
                              }
                              
                             {
-                                rideDetail &&
+                                rideDetail.length != 0 &&
                           
                                     rideDetail.map(ride => {
                                            return (<tr key={ride.id} >
@@ -144,7 +174,7 @@ const ShowallRides = () => {
                         position: 'absolute',
                         bottom: '106px',
                         left: '352px'
-                  }}>Cancel Ride</button>
+                  }} onClick={cancelRide}>Cancel Ride</button>
                   </div>
                  }   
 
@@ -156,44 +186,11 @@ const ShowallRides = () => {
                             position: 'absolute',
                             bottom: '17px',
                             left: '352px',                            
-                      }}>Offer a Rides!</button>
+                      }} onClick={() => navigate('/offer_ride')}>Offer a Rides!</button>
                     </div>
                 
                 </div>
-        <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton style={{background: 'cornflowerblue'}}>
-          <Modal.Title>Ride details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <table style={{width:'100%',marginTop:'12px'}} className='table'>
-                         <thead className="thead-light">
-                             <tr>
-                                 <th>Name</th>                             
-                                  <th>Start Point</th>
-                                  <th>End Point</th>
-                                  <th>Car</th>
-                                  <th>Seats Available</th>
-                             </tr>
-                         </thead>
-                         <tbody>
-                              {rideDetail ?
-                              rideDetail.map(ride => {
-                                     return (<tr key={ride.id} >
-                                             <td>{ride.name}</td>
-                                             <td>{ride.pickUp}</td>
-                                             <td>{ride.destination}</td>
-                                             <td>{ride.car}</td>
-                                             <td>{ride.seatsLeft}</td>
-                                     </tr>)
-                             }):<tr><td>No Data found</td></tr>
-                             }
-                         </tbody>
-                    </table>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={bookRide}>Book a Ride</Button>
-        </Modal.Footer>
-      </Modal>
+        
             </div>
         </>
     );

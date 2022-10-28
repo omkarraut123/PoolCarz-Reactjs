@@ -27,3 +27,8 @@ code {
     top: 30px;
     height: 400px;
 }
+tr:hover {
+  background-color: coral;
+  cursor: pointer;
+}
+

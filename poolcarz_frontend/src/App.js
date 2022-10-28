@@ -5,6 +5,7 @@ import Login from './components/Login';
 import { Routes,Route } from 'react-router-dom';
 import ShowRide from './components/ShowRide';
 import ShowallRides from './components/ShowallRides';
+import OfferRide from './components/OfferRide';
 function App() {
   return (
     <div >      
@@ -14,6 +15,7 @@ function App() {
           <Route path='/' element={<Login />}/>
           <Route path='/show_rides' element={<ShowRide />} />
           <Route path='/show_rides/all' element={<ShowallRides />} />
+          <Route path='/offer_ride' element={<OfferRide />} />
         </Routes>
     <Footer />
     </div>
