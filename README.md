@@ -35,6 +35,7 @@ The application should contain the following features:
 
 ## Database Design:
 Following is the list of collections that would be created in MongoDB automatically on the execution of the PoolCarz Server-Side application. 
+
 •	Users
 
 •	Offers
